@@ -1,24 +1,20 @@
-import { useContext, useEffect, useRef } from "react";
-import { SettingsContext } from "../contexts/settings";
-import createConnection from "../utils/connection";
+import { useEffect } from "react";
+import { createConnection } from "../utils/chat";
+import { showNotification } from "../utils/showNotifications";
+import { experimental_useEffectEvent as useEffectEventt } from "react";
 
-// const serverUrl = "https://localhost:1234";
-
-export default function ChatRoom({ roomId, selectedServerUrl }) {
-    const settings = useContext(SettingsContext);
-    const serverUrl = selectedServerUrl ?? settings.defaultServerUrl; // derived reactive value
-    const ref = useRef(null);
-
-    useEffect(() => {
-        ref.current.style.color = "red";
-
-        const connection = createConnection(serverUrl, roomId);
-        connection.connect();
-
-        return () => {
-            connection.disconnect();
-        };
-    }, [roomId, serverUrl]);
-
-    return <h1 ref={ref}>Welcome to the {roomId} room!</h1>;
+const serverUrl = "https://localhost:1234";
+export default function ChatRoom({ roomId, theme }) {
+  const onConnected = useEffectEventt(() => {
+    showNotification("Connected", theme);
+  });
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.on("connected", () => {
+      onConnected();
+    });
+    connection.connect();
+    return () => connection.disconnect();
+  }, [roomId]);
+  return <h1>Welcome to the {roomId} room!</h1>;
 }
