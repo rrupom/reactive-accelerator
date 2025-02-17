@@ -24,7 +24,7 @@ export default function TestPointer() {
     window.addEventListener("pointermove", onMove);
 
     return () => window.removeEventListener("pointermove", onMove);
-  }, [canMove]);
+  }, []);
   return (
     <>
       <label>
