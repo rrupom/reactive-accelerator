@@ -1,1 +1,1 @@
-## Installing Next.js
+## Basic Layout and Template
